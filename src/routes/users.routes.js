@@ -1,7 +1,9 @@
-import { Router } from 'express';
-const router = Router();
-import fs from 'fs';
-import path from 'path';
+import { Router } from 'express'; 
+const router = Router(); // Router de express
+import fs from 'fs'; // file system
+import path from 'path'; // rutas de directorio
+
+// concatenar la ruta raiz con el archivo usuarios.json
 const usuariosFilePath = path.join(process.cwd(), 'data', 'usuarios.json');
 
 // Ruta GET para obtener todos los usuarios
@@ -17,10 +19,8 @@ router.post('/', (req, res) => {
   res.json({ message: 'Usuario agregado con éxito' });
 });
 
-
 function obtenerUsuarios() {
   try {
-    
     const contenido = fs.readFileSync(usuariosFilePath, 'utf-8');
     return JSON.parse(contenido);
   } catch (error) {
@@ -32,11 +32,10 @@ function obtenerUsuarios() {
 function guardarUsuario(usuario) {
   try {
     const contenidoActual = obtenerUsuarios();
+    const todosLosIds = contenidoActual.map((user) => user.id) // seleccionar los ids del array
+    const nuevoId = Math.max(...todosLosIds, 0) + 1; // el idMax + 1 es el nuevo Id
 
-    const nuevoId = Math.max(...contenidoActual.map((user) => user.id), 0) + 1;
-
-    
-    const nuevoUsuario = { id: nuevoId, ...usuario };
+    const nuevoUsuario = { id: nuevoId, ...usuario }; // creamos el usuario
     const nuevosUsuarios = [...contenidoActual, nuevoUsuario];
     fs.writeFileSync(usuariosFilePath, JSON.stringify(nuevosUsuarios, null, 2));
   } catch (error) {
